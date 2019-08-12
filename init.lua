@@ -1,8 +1,8 @@
 include("cmdlib", "trie.lua")
 
 local override_minetest = false
-local error_format = minetest.get_color_escape_sequence("#FF0000").."✗ %s"
-local success_format = minetest.get_color_escape_sequence("#00FF00").."✓ %s"
+local error_format = minetest.get_color_escape_sequence("#FF0000").."%s"
+local success_format = minetest.get_color_escape_sequence("#00FF00").."%s"
 local chatcommands = trie.new()
 chatcommand_info = {}
 cmd_ext = {
