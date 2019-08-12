@@ -12,7 +12,7 @@ Code & media by Lars Mueller aka LMD or appguru(eu). Licensed under GPLv3.
 
 ## Screenshot
 
-![Screenshot](/home/lars/.minetest/mods/cmdlib/screenshot.png)
+![Screenshot](https://github.com/appgurueu/cmdlib/blob/master/screenshot.png)
 
 ## API
 
