@@ -220,7 +220,6 @@ dofile(get_resource("cmdlib", "override.lua"))
 --[[
 dofile("test.lua")
 ]]
-dofile(get_resource("cmdlib", "test.lua"))
 
 minetest.register_on_mods_loaded(function()
     dofile(get_resource("cmdlib", "help.lua"))
