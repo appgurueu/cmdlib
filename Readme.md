@@ -10,6 +10,8 @@ and other features useful for players, such as suggestions, command trees, and a
 Depends on [`modlib`](https://github.com/appgurueu/modlib). IntelliJ IDEA with EmmyLua plugin project.
 Code & media by Lars Mueller aka LMD or appguru(eu). Licensed under GPLv3.
 
+Links : [GitHub](https://github.com/appgurueu/cmdlib), [Minetest Forum](https://forum.minetest.net/viewtopic.php?t=23055), [Content DB](https://content.minetest.net/packages/LMD/cmdlib/)
+
 ## Screenshot
 
 ![Screenshot](https://github.com/appgurueu/cmdlib/blob/master/screenshot.png)
@@ -18,6 +20,7 @@ Code & media by Lars Mueller aka LMD or appguru(eu). Licensed under GPLv3.
 
 A few API methods are listed below. Browse the code for more.
 Three parts are provided by `cmdlib` : 
+
 * Trie data structure
 * Help command
 * Chatcommand utils (main part)
@@ -27,6 +30,7 @@ Three parts are provided by `cmdlib` :
 Name (`name`) : Chatcommand name, including whitespaces (such as `mod command`)
 
 Definition (`def`) : Table with entries `params`, `custom_syntax`, `implicit_call`, `description`, `privs`, and `func`
+
 * Params : Argument syntax, string, format of `<required_param> [optional_param]`, or `{param}` for zero or more occurrences.
   Needs required params first, then optional ones, and finally, an optional list
 * Custom syntax : Flag, if set to true, `func` will be called with string params (empty string if none given). Automatically true if params string is invalid.

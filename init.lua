@@ -134,6 +134,12 @@ cmd_ext = {
             trie.insert(chatcommands, name, definition, override)
         else
             local supercommand, super_info = trie.get(chatcommands, scopes[1]), chatcommand_info[scopes[1]]
+            if not supercommand then
+                supercommand = {subcommands = {}, func = function() end}
+                trie.insert(chatcommands, scopes[1], supercommand)
+                super_info = {subcommands = {}}
+                chatcommand_info[scopes[1]] = super_info
+            end
             local inherited_privs = table_ext.tablecopy(supercommand.privs or {})
             for i = 2, #scopes-1 do
                 if not supercommand.subcommands then
@@ -142,7 +148,7 @@ cmd_ext = {
                 if not super_info.subcommands then
                     super_info.subcommands = {}
                 end
-                local subcommand = {subcommands = trie.new()}
+                local subcommand = {subcommands = trie.new(), func = function() end}
                 local prevval = trie.insert(supercommand.subcommands, scopes[i], subcommand)
                 table_ext.add_all(inherited_privs, prevval.privs or {})
                 supercommand = prevval or subcommand --trie.get(supercommand.subcommands, scopes[i])
@@ -156,7 +162,7 @@ cmd_ext = {
             if not super_info.subcommands then
                 super_info.subcommands = {}
             end
-            definition.privs = inherited_privs
+            definition.privs = next(inherited_privs) and inherited_privs
             super_info.subcommands[scopes[#scopes]] = table_ext.tablecopy(definition)
             trie.insert(supercommand.subcommands, scopes[#scopes], definition, override)
         end
