@@ -74,8 +74,9 @@ cmd_ext = {
         if next(required_params) then
             if next(optional_params) then
                 paramlist = {unpack(required_params), unpack(optional_params)}
+            else
+                paramlist = required_params
             end
-            paramlist = required_params
         elseif next(optional_params) then
             paramlist = optional_params
         end
