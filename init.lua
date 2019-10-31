@@ -3,9 +3,10 @@ include("cmdlib", "trie.lua")
 local override_minetest = false
 local error_format = minetest.get_color_escape_sequence("#FF0000").."%s"
 local success_format = minetest.get_color_escape_sequence("#00FF00").."%s"
-local chatcommands = trie.new()
-chatcommand_info = {}
+
 cmd_ext = {
+    chatcommands = trie.new(),
+    chatcommand_info = {},
     error = function(str)
         return string.format(error_format, str)
     end,
@@ -131,15 +132,15 @@ cmd_ext = {
         definition.func = cmd_ext.build_func(definition)
         local scopes=string_ext.split_without_limit(name, " ")
         if #scopes == 1 then
-            chatcommand_info[name] = table_ext.tablecopy(definition)
-            trie.insert(chatcommands, name, definition, override)
+            cmd_ext.chatcommand_info[name] = table_ext.tablecopy(definition)
+            trie.insert(cmd_ext.chatcommands, name, definition, override)
         else
-            local supercommand, super_info = trie.get(chatcommands, scopes[1]), chatcommand_info[scopes[1]]
+            local supercommand, super_info = trie.get(cmd_ext.chatcommands, scopes[1]), cmd_ext.chatcommand_info[scopes[1]]
             if not supercommand then
                 supercommand = {subcommands = {}, func = function() end}
-                trie.insert(chatcommands, scopes[1], supercommand)
+                trie.insert(cmd_ext.chatcommands, scopes[1], supercommand)
                 super_info = {subcommands = {}}
-                chatcommand_info[scopes[1]] = super_info
+                cmd_ext.chatcommand_info[scopes[1]] = super_info
             end
             local inherited_privs = table_ext.tablecopy(supercommand.privs or {})
             for i = 2, #scopes-1 do
@@ -187,7 +188,7 @@ cmd_ext = {
 function cmd_ext.handle_chat_message(sendername, message)
     if message:sub(1, 1) == "/" then
         local last_space, next_space = 2, message:find(" ")
-        local command_trie, command_name = chatcommands
+        local command_trie, command_name = cmd_ext.chatcommands
         local cmd, suggestion
         repeat
             next_space = next_space or message:len()+1
@@ -257,5 +258,5 @@ minetest.register_on_mods_loaded(function()
         table.sort(new_info, function(d1, d2) return d1.name < d2.name end)
         return new_info
     end
-    chatcommand_info = convert(chatcommand_info)
+    cmd_ext.chatcommand_info = convert(cmd_ext.chatcommand_info)
 end)

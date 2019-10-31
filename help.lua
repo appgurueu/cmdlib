@@ -1,5 +1,5 @@
 function cmd_ext.show_help_formspec(sendername, query)
-    local chatcommand_info = chatcommand_info
+    local chatcommand_info = cmd_ext.chatcommand_info
     if query then
         local query = query:lower()
         local function search(chatcommands)
