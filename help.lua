@@ -90,9 +90,8 @@ function cmd_ext.show_help_formspec(sendername, query)
     end
     traverse_commands(chatcommand_info, 1, "")
     tablecontent = table.concat(tablecontent, ",")
-    minetest.show_formspec(sendername, "cmdlib:help",
+    minetest.show_formspec(sendername, "cmdlib:help", --real_coordinates[true]
 [[size[12,8]
-real_coordinates[true]
 image_button[0,0;1.5,0.75;cmdlib_clear.png;clear;      Clear]
 field[1.75,0.4;7.5,0.5;query;;]] .. minetest.formspec_escape(query) .. [[]
 field_close_on_enter[query;false]
