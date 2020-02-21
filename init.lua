@@ -1,6 +1,5 @@
 include("cmdlib", "trie.lua")
 
-local override_minetest = false
 local error_format = minetest.get_color_escape_sequence("#FF0000").."%s"
 local success_format = minetest.get_color_escape_sequence("#00FF00").."%s"
 
@@ -152,9 +151,9 @@ cmd_ext = {
                 end
                 local subcommand = {subcommands = trie.new(), func = function() end}
                 local prevval = trie.insert(supercommand.subcommands, scopes[i], subcommand)
-                table_ext.add_all(inherited_privs, prevval.privs or {})
-                supercommand = prevval or subcommand --trie.get(supercommand.subcommands, scopes[i])
-                super_info[scopes[i]] = super_info.subcommands[scopes[i]] or {subcommands = {}}
+                table_ext.add_all(inherited_privs, (prevval and prevval.privs) or {})
+                supercommand = prevval or subcommand
+                super_info.subcommands[scopes[i]] = super_info.subcommands[scopes[i]] or {subcommands = {}}
                 super_info = super_info.subcommands[scopes[i]]
             end
             table_ext.add_all(inherited_privs, def.privs or {})
