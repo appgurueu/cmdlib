@@ -2,6 +2,11 @@ include("cmdlib", "trie.lua")
 
 local error_format = minetest.get_color_escape_sequence("#FF0000").."%s"
 local success_format = minetest.get_color_escape_sequence("#00FF00").."%s"
+local scope_func = function(scope)
+    return function()
+        return false, "Not a chatcommand, but a category. For a list of subcommands do /help " .. scope .."."
+    end
+end
 
 cmd_ext = {
     chatcommands = trie.new(),
@@ -120,7 +125,7 @@ cmd_ext = {
             params = def.params ~= "" and def.params,
             custom_syntax = def.custom_syntax,
             implicit_call = def.implicit_call,
-            fnc = def.func or error("/"..name.." : No function given")
+            fnc = def.func or error("/"..name..": No function given")
         }
         if definition.params then
             definition.implicit_call = true
@@ -136,7 +141,7 @@ cmd_ext = {
         else
             local supercommand, super_info = trie.get(cmd_ext.chatcommands, scopes[1]), cmd_ext.chatcommand_info[scopes[1]]
             if not supercommand then
-                supercommand = {subcommands = {}, func = function() end}
+                supercommand = {subcommands = trie.new(), func = scope_func(scopes[1])}
                 trie.insert(cmd_ext.chatcommands, scopes[1], supercommand)
                 super_info = {subcommands = {}}
                 cmd_ext.chatcommand_info[scopes[1]] = super_info
@@ -149,7 +154,7 @@ cmd_ext = {
                 if not super_info.subcommands then
                     super_info.subcommands = {}
                 end
-                local subcommand = {subcommands = trie.new(), func = function() end}
+                local subcommand = {subcommands = trie.new(), func = scope_func(scopes[1])}
                 local prevval = trie.insert(supercommand.subcommands, scopes[i], subcommand)
                 table_ext.add_all(inherited_privs, (prevval and prevval.privs) or {})
                 supercommand = prevval or subcommand
@@ -219,6 +224,8 @@ function cmd_ext.handle_chat_message(sendername, message)
         return true
     end
 end
+
+cmdlib = cmd_ext
 
 table.insert(core.registered_on_chat_messages, 1, cmd_ext.handle_chat_message)
 
