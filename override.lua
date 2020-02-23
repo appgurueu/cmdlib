@@ -1,7 +1,7 @@
 minetest.original_register_chatcommand = minetest.register_chatcommand
 
 local minetest_register_chatcommand = function(name, def)
-    cmd_ext.register_chatcommand(name, {
+    register_chatcommand(name, {
         description = def.description,
         privs = def.privs,
         params = def.params,

@@ -1,5 +1,5 @@
-function cmd_ext.show_help_formspec(sendername, query)
-    local chatcommand_info = cmd_ext.chatcommand_info
+function show_help_formspec(sendername, query)
+    local chatcommand_info = chatcommand_info
     if query then
         local query = query:lower()
         local function search(chatcommands)
@@ -37,12 +37,10 @@ function cmd_ext.show_help_formspec(sendername, query)
             end
             local name = info.name or "WTH"
             local scope = scope .. name .. " "
-            local missing, to_lose = cmd_ext.validate_privs_ipairs(info.privs or {}, info.forbidden_privs or {}, minetest.get_player_privs(sendername))
+            local missing, to_lose = validate_privs_ipairs(info.privs or {}, info.forbidden_privs or {}, minetest.get_player_privs(sendername))
             local privs = next(missing) or next(to_lose)
             local red_or_green = (privs and "#FF0000") or "#00FF00"
             row(red_or_green, number, red_or_green, name, "#FFFF00", info.descriptions[1] .. ((#info.descriptions > 1 and "...") or ""))
-            --table.insert(tablecontent, minetest.formspec_escape(description1) or "")
-            --if privs then table.insert(tablecontent, privs) else table.insert(tablecontent, "") end
             for i = 2, #info.descriptions do
                 row("#FFFF00", number + 1, "#FFFF00", info.descriptions[i])
             end
@@ -53,12 +51,12 @@ function cmd_ext.show_help_formspec(sendername, query)
                 table.insert(tablecontent, number + 1)
                 if info.privs then
                     table.insert(tablecontent, "#00FF00")
-                    table.insert(tablecontent, minetest.formspec_escape("Required : " ..
+                    table.insert(tablecontent, minetest.formspec_escape("Required: " ..
                             table.concat(info.privs, ", ")))
                 end
                 if info.forbidden_privs then
                     table.insert(tablecontent, "#FF0000")
-                    table.insert(tablecontent, minetest.formspec_escape("Forbidden : " ..
+                    table.insert(tablecontent, minetest.formspec_escape("Forbidden: " ..
                             table.concat(info.forbidden_privs, ", ")))
                 end
                 if not info.privs or not info.forbidden_privs then
@@ -71,11 +69,11 @@ function cmd_ext.show_help_formspec(sendername, query)
                     table.insert(tablecontent, number + 1)
                     if next(missing) then
                         table.insert(tablecontent, "#00FF00")
-                        table.insert(tablecontent, minetest.formspec_escape("Missing : " .. table.concat(missing, ", ")))
+                        table.insert(tablecontent, minetest.formspec_escape("Missing: " .. table.concat(missing, ", ")))
                     end
                     if next(to_lose) then
                         table.insert(tablecontent, "#FF0000")
-                        table.insert(tablecontent, minetest.formspec_escape("To lose : " .. table.concat(to_lose, ", ")))
+                        table.insert(tablecontent, minetest.formspec_escape("To lose: " .. table.concat(to_lose, ", ")))
                     end
                     if not next(missing) or not next(to_lose) then
                         table.insert(tablecontent, "#FFFFFF")
