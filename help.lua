@@ -5,7 +5,7 @@ function show_help_formspec(sendername, query)
         local function search(chatcommands)
             local new_info = {}
             for index, def in ipairs(chatcommands) do
-                local def = table_ext.tablecopy(def)
+                local def = modlib.table.tablecopy(def)
                 if def.name:lower():find(query, 1, true) or def.description:lower():find(query, 1, true) then
                     table.insert(new_info, def)
                 elseif def.subcommands then
@@ -35,7 +35,7 @@ function show_help_formspec(sendername, query)
                     cell(minetest.formspec_escape(unpacked[i] or ""))
                 end
             end
-            local name = info.name or "WTH"
+            local name = info.name or "No name"
             local scope = scope .. name .. " "
             local missing, to_lose = validate_privs_ipairs(info.privs or {}, info.forbidden_privs or {}, minetest.get_player_privs(sendername))
             local privs = next(missing) or next(to_lose)
@@ -103,18 +103,18 @@ end
 minetest.register_on_player_receive_fields(function(player, formname, fields)
     if formname == "cmdlib:help" and not fields.close then
         if fields.clear then
-            cmd_ext.show_help_formspec(player:get_player_name())
+            cmdlib.show_help_formspec(player:get_player_name())
         elseif fields.search or fields.query then
-            cmd_ext.show_help_formspec(player:get_player_name(), fields.query)
+            cmdlib.show_help_formspec(player:get_player_name(), fields.query)
         end
     end
 end)
 
-cmd_ext.register_chatcommand("help", {
+cmdlib.register_chatcommand("help", {
     params = "[query]",
     description = "List chatcommands or query them.",
     func = function(sendername, params)
-        cmd_ext.show_help_formspec(sendername, params.query)
+        cmdlib.show_help_formspec(sendername, params.query)
         return true
     end
 }, true)

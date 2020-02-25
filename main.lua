@@ -45,10 +45,10 @@ end
 function sufficient_privs(required, playername)
     local missing, to_lose = validate_privs(required, minetest.get_player_privs(playername))
     local str
-    if not table_ext.is_empty(missing) then
+    if not modlib.table.is_empty(missing) then
         str = string.format("Missing privilege%s: ", ("s" and #missing > 1) or "") .. table.concat(missing)
     end
-    if not table_ext.is_empty(to_lose) then
+    if not modlib.table.is_empty(to_lose) then
         str =
             (str or "") ..
             string.format("%srivilege%s which need to be lost: ", (str and ", p") or "P", ("s" and #to_lose > 1) or "") ..
@@ -57,7 +57,7 @@ function sufficient_privs(required, playername)
     return str
 end
 function build_param_parser(syntax)
-    local params = string_ext.split_without_limit(syntax, " ")
+    local params = modlib.text.split_without_limit(syntax, " ")
     local required_params, optional_params, list_param = {}, {}
     local i = 1
     while i <= #params and params[i]:sub(1, 1) == "<" and params[i]:sub(params[i]:len()) == ">" do
@@ -78,24 +78,16 @@ function build_param_parser(syntax)
         end
     end
 
-    local limit = #required_params + #optional_params + 1
+    local limit = #required_params + #optional_params
     if list_param then
         limit = nil
     end
     local minimum = #required_params
-    local paramlist = {}
-    if next(required_params) then
-        if next(optional_params) then
-            paramlist = {unpack(required_params), unpack(optional_params)}
-        else
-            paramlist = required_params
-        end
-    elseif next(optional_params) then
-        paramlist = optional_params
-    end
+    local paramlist = required_params
+    modlib.table.append(paramlist, optional_params)
     return function(param)
-        local params = string_ext.split(param, " ", limit)
-        for i, param in table_ext.rpairs(params) do
+        local params = modlib.text.split(param, " ", limit)
+        for i, param in modlib.table.rpairs(params) do
             if param == "" then
                 table.remove(params, i)
             end
@@ -160,9 +152,9 @@ function register_chatcommand(name, def, override)
         definition.param_parser = build_param_parser(definition.params or "")
     end
     definition.func = build_func(definition)
-    local scopes = string_ext.split_without_limit(name, " ")
+    local scopes = modlib.text.split_without_limit(name, " ")
     if #scopes == 1 then
-        chatcommand_info[name] = table_ext.tablecopy(definition)
+        chatcommand_info[name] = modlib.table.tablecopy(definition)
         trie.insert(chatcommands, name, definition, override)
     else
         local supercommand, super_info = trie.get(chatcommands, scopes[1]), chatcommand_info[scopes[1]]
@@ -172,7 +164,7 @@ function register_chatcommand(name, def, override)
             super_info = {subcommands = {}}
             chatcommand_info[scopes[1]] = super_info
         end
-        local inherited_privs = table_ext.tablecopy(supercommand.privs or {})
+        local inherited_privs = modlib.table.tablecopy(supercommand.privs or {})
         for i = 2, #scopes - 1 do
             if not supercommand.subcommands then
                 supercommand.subcommands = trie.new()
@@ -182,12 +174,12 @@ function register_chatcommand(name, def, override)
             end
             local subcommand = {subcommands = trie.new(), func = scope_func(scopes[1])}
             local prevval = trie.insert(supercommand.subcommands, scopes[i], subcommand)
-            table_ext.add_all(inherited_privs, (prevval and prevval.privs) or {})
+            modlib.table.add_all(inherited_privs, (prevval and prevval.privs) or {})
             supercommand = prevval or subcommand
             super_info.subcommands[scopes[i]] = super_info.subcommands[scopes[i]] or {subcommands = {}}
             super_info = super_info.subcommands[scopes[i]]
         end
-        table_ext.add_all(inherited_privs, def.privs or {})
+        modlib.table.add_all(inherited_privs, def.privs or {})
         if not supercommand.subcommands then
             supercommand.subcommands = trie.new()
         end
@@ -195,7 +187,7 @@ function register_chatcommand(name, def, override)
             super_info.subcommands = {}
         end
         definition.privs = next(inherited_privs) and inherited_privs
-        super_info.subcommands[scopes[#scopes]] = table_ext.tablecopy(definition)
+        super_info.subcommands[scopes[#scopes]] = modlib.table.tablecopy(definition)
         trie.insert(supercommand.subcommands, scopes[#scopes], definition, override)
     end
 end
