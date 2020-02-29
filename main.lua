@@ -1,4 +1,4 @@
-extend_mod("cmdlib", "trie")
+modlib.mod.extend("cmdlib", "trie")
 error_format = minetest.get_color_escape_sequence("#FF0000") .. "%s"
 success_format = minetest.get_color_escape_sequence("#00FF00") .. "%s"
 function scope_func(scope)
@@ -254,7 +254,7 @@ end
 
 table.insert(core.registered_on_chat_messages, 1, handle_chat_message)
 
-extend_mod("cmdlib", "override")
+modlib.mod.extend("cmdlib", "override")
 -- Tests - only uncomment if testing stuff
 --[[
 dofile("test.lua")
@@ -294,7 +294,7 @@ end
 
 minetest.register_on_mods_loaded(
     function()
-        extend_mod("cmdlib", "help")
+        modlib.mod.extend("cmdlib", "help")
         chatcommand_info = build_info(chatcommand_info)
     end
 )

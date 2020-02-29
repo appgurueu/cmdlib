@@ -25,19 +25,19 @@ Three parts are provided by `cmdlib` :
 * Help command
 * Chatcommand utils (main part)
 
-### `cmd_ext.register(name, def)`
+### `cmdlib.register(name, def)`
 
 Name (`name`) : Chatcommand name, including whitespaces (such as `mod command`)
 
 Definition (`def`) : Table with entries `params`, `custom_syntax`, `implicit_call`, `description`, `privs`, and `func`
 
-* Params : Argument syntax, string, format of `<required_param> [optional_param]`, or `{param}` for zero or more occurrences.
+* Params: Argument syntax, string, format of `<required_param> [optional_param]`, or `{param}` for zero or more occurrences.
   Needs required params first, then optional ones, and finally, an optional list
-* Custom syntax : Flag, if set to true, `func` will be called with string params (empty string if none given). Automatically true if params string is invalid.
-* Implicit call : Metacommands only. If set to true, chatcommand will be called instead of proposing subcommand. Automatically true if `params` are specified.
-* Description : Text describing the usage of the chatcommand
-* Privileges : Table with privs which are required or should be missing, like `{priv1=true, priv2=false}`
-* Function : Function being invoked with `sendername` and a table of parameters (`{param1="..."}`), `{params}` will be supplied as tables
+* Custom syntax: Flag, if set to true, `func` will be called with string params (empty string if none given). Automatically true if params string is invalid.
+* Implicit call: Metacommands only. If set to true, chatcommand will be called instead of proposing subcommand. Automatically true if `params` are specified.
+* Description: Text describing the usage of the chatcommand
+* Privileges: Table with privs which are required or should be missing, like `{priv1=true, priv2=false}`
+* Function: Function being invoked with `sendername` and a table of parameters (`{param1="..."}`), `{params}` will be supplied as tables
 
 ### `trie.new()`
 

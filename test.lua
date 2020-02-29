@@ -6,7 +6,7 @@ function test_format()
 end
 
 function test_chatcommands()
-    cmd_ext.register_chatcommand("cmdlib_test", {
+    cmdlib.register_chatcommand("cmdlib_test", {
         params = "<param1>",
         privs = {fast = true},
         description = "Test command for cmdlib.",
@@ -14,7 +14,7 @@ function test_chatcommands()
             return true, "You shouted "..(params.param1)
         end
     })
-    cmd_ext.register_chatcommand("cmdlib_test say", {
+    cmdlib.register_chatcommand("cmdlib_test say", {
         params = "<param1>",
         privs = {fast = true, noclip = false},
         description = "Test command for cmdlib.",
@@ -23,7 +23,7 @@ function test_chatcommands()
         end
     })
     -- TODO fix error when invoking without params (should say params required ?)
-    cmd_ext.register_chatcommand("cmdlib_test bark", {
+    cmdlib.register_chatcommand("cmdlib_test bark", {
         params = "<param1>",
         privs = {fast = true},
         description = "Test command for cmdlib.",
@@ -31,7 +31,7 @@ function test_chatcommands()
             return true, "You barked "..(params.param1)
         end
     })
-    cmd_ext.register_chatcommand("cmdlib_test bark loud", {
+    cmdlib.register_chatcommand("cmdlib_test bark loud", {
         params = "[param1]",
         privs = {fast = true},
         description = "Test command : cmdlib.",
