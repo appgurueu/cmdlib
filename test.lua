@@ -6,14 +6,19 @@ function test_format()
 end
 
 function test_chatcommands()
-    cmdlib.register_chatcommand("cmdlib_test", {
+    --[[cmdlib.register_chatcommand("cmdlib_test", {
         params = "<param1>",
         privs = {fast = true},
         description = "Test command for cmdlib.",
         func = function(sendername, params)
             return true, "You shouted "..(params.param1)
         end
+    })]]
+    cmdlib.register_chatcommand("this", {
+        params = "<param1>",
+        func = function() end
     })
+    cmdlib.unregister_chatcommand("this")
     cmdlib.register_chatcommand("cmdlib_test say", {
         params = "<param1>",
         privs = {fast = true, noclip = false},
@@ -22,23 +27,23 @@ function test_chatcommands()
             return true, "You said "..(params.param1)
         end
     })
-    -- TODO fix error when invoking without params (should say params required ?)
-    cmdlib.register_chatcommand("cmdlib_test bark", {
+    cmdlib.register_chatcommand("cmdlib_test repeat", {
         params = "<param1>",
         privs = {fast = true},
         description = "Test command for cmdlib.",
         func = function(sendername, params)
-            return true, "You barked "..(params.param1)
+            return true, "Param1: "..(params.param1)
         end
     })
-    cmdlib.register_chatcommand("cmdlib_test bark loud", {
+    cmdlib.register_chatcommand("cmdlib_test shout loud", {
         params = "[param1]",
         privs = {fast = true},
-        description = "Test command : cmdlib.",
+        description = "Test command with a different description.",
         func = function(sendername, params)
-            return true, "You BARKED "..(params.param1 or "IDK")
+            return true, "You SHOUTED "..(params.param1 or "IDK")
         end
     })
+    cmdlib.unregister_chatcommand("cmdlib_test shout loud")
 end
 
 function test_trie()
@@ -46,7 +51,6 @@ function test_trie()
     trie.insert(t, "help")
     trie.insert(t, "heap")
     trie.insert(t, "me")
-    --trie.insert(t, "heap")
     print(trie.search(t, "hewp"))
     trie.remove(t, "heap")
     print(trie.search(t, "help"))
@@ -63,5 +67,3 @@ test_chatcommands()
 -- test_format()
 -- test_trie()
 -- test_info()
-
---minetest.register_node("cmdlib:item", {description = minetest.get_color_escape_sequence("#FF0000").."✗ Looks like there's an error !"})
