@@ -152,7 +152,7 @@ function register_chatcommand(name, def, override)
             super_info = {subcommands = {}}
             chatcommand_info[scopes[1]] = super_info
         end
-        local inherited_privs = modlib.table.tablecopy(supercommand.privs or {})
+        local inherited_privs = modlib.table.copy(supercommand.privs or {})
         for i = 2, #scopes - 1 do
             if not supercommand.subcommands then
                 supercommand.subcommands = trie.new()
@@ -162,6 +162,7 @@ function register_chatcommand(name, def, override)
             end
             local subcommand = {
                 subcommands = trie.new(),
+                privs = modlib.table.copy(inherited_privs),
                 func = scope_func(scopes[1])
             }
             local prevval = trie.insert(supercommand.subcommands, scopes[i],
@@ -170,7 +171,7 @@ function register_chatcommand(name, def, override)
                                  (prevval and prevval.privs) or {})
             supercommand = prevval or subcommand
             super_info.subcommands[scopes[i]] =
-                super_info.subcommands[scopes[i]] or {subcommands = {}}
+                super_info.subcommands[scopes[i]] or {subcommands = {}, privs = modlib.table.copy(inherited_privs)}
             super_info = super_info.subcommands[scopes[i]]
         end
         modlib.table.add_all(inherited_privs, def.privs or {})
@@ -179,8 +180,7 @@ function register_chatcommand(name, def, override)
         end
         if not super_info.subcommands then super_info.subcommands = {} end
         definition.privs = next(inherited_privs) and inherited_privs
-        super_info.subcommands[scopes[#scopes]] =
-            modlib.table.tablecopy(definition)
+        super_info.subcommands[scopes[#scopes]] = modlib.table.copy(definition)
         trie.insert(supercommand.subcommands, scopes[#scopes], definition,
                     override)
     end
