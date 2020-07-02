@@ -1,10 +1,10 @@
 function show_help_formspec(sendername, query)
-    local chatcommand_info = chatcommand_info
+    local chatcommand_info = chatcommand_help
     if query then
         local query = query:lower()
         local function search(chatcommands)
             local new_info = {}
-            for index, def in ipairs(chatcommands) do
+            for _, def in ipairs(chatcommands) do
                 local def = modlib.table.tablecopy(def)
                 if def.name:lower():find(query, 1, true) or def.description:lower():find(query, 1, true) then
                     table.insert(new_info, def)
@@ -23,20 +23,20 @@ function show_help_formspec(sendername, query)
     end
     local tablecontent = {}
     local function traverse_commands(commands, number, scope)
-        for index, info in ipairs(commands) do
+        for _, info in ipairs(commands) do
             local function cell(value)
                 table.insert(tablecontent, value)
             end
             local function row(signcolor, level, ...)
                 cell(signcolor or "")
                 cell(level or number)
-                local unpacked = { ... }
+                local packed = { ... }
                 for i = 1, 4 do
-                    cell(minetest.formspec_escape(unpacked[i] or ""))
+                    cell(minetest.formspec_escape(packed[i] or ""))
                 end
             end
             local name = info.name or "No name"
-            local scope = scope .. name .. " "
+            local sub_scope = info.is_mod and scope or (scope .. name .. " ")
             local missing, to_lose = validate_privs_ipairs(info.privs or {}, info.forbidden_privs or {}, minetest.get_player_privs(sendername))
             local privs = next(missing) or next(to_lose)
             local red_or_green = (privs and "#FF0000") or "#00FF00"
@@ -44,7 +44,9 @@ function show_help_formspec(sendername, query)
             for i = 2, #info.descriptions do
                 row("#FFFF00", number + 1, "#FFFF00", info.descriptions[i])
             end
-            row("#FFFF00", number + 1, "#FFFF00", "/" .. scope .. (info.params or ""))
+            if not info.is_mod then
+                row("#FFFF00", number + 1, "#FFFF00", "/" .. sub_scope .. (info.params or ""))
+            end
             --
             if info.privs or info.forbidden_privs then
                 table.insert(tablecontent, "#FF0000")
@@ -82,7 +84,7 @@ function show_help_formspec(sendername, query)
                 end
             end
             if info.subcommands then
-                traverse_commands(info.subcommands, number + 1, scope)
+                traverse_commands(info.subcommands, number + 1, sub_scope)
             end
         end
     end

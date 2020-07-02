@@ -11,8 +11,10 @@ end
 
 chatcommands = trie.new()
 chatcommand_info = {}
+chatcommand_info_by_mod = {}
 format_error = function(str) return string.format(error_format, str) end
 format_success = function(str) return string.format(success_format, str) end
+chatcommand_help_built = false
 function validate_privs(required, actual)
     local missing, to_lose = {}, {}
     for priv, expected in pairs(required) do
@@ -83,8 +85,8 @@ function build_param_parser(syntax)
     modlib.table.append(paramlist, optional_params)
     return function(param)
         local params = modlib.text.split(param, " ", limit)
-        for i, param in modlib.table.rpairs(params) do
-            if param == "" then table.remove(params, i) end
+        for index, param in modlib.table.rpairs(params) do
+            if param == "" then table.remove(params, index) end
         end
         if #params < minimum then
             return "Too few parameters given! At least " .. minimum .. " " ..
@@ -129,7 +131,8 @@ function register_chatcommand(name, def, override)
         params = def.params ~= "" and def.params,
         custom_syntax = def.custom_syntax,
         implicit_call = def.implicit_call,
-        fnc = def.func or error("/" .. name .. ": No function given")
+        fnc = def.func or error("/" .. name .. ": No function given"),
+        mod = def.mod or minetest.get_current_modname()
     }
     if definition.params then definition.implicit_call = true end
     if not definition.custom_syntax then
@@ -137,12 +140,22 @@ function register_chatcommand(name, def, override)
     end
     definition.func = build_func(definition)
     local scopes = modlib.text.split_without_limit(name, " ")
+    local function insert_info_by_mod(name)
+        local mod = definition.mod
+        if mod then
+            local mod_commands = chatcommand_info_by_mod[mod] or {}
+            mod_commands[name] = chatcommand_info[name]
+            chatcommand_info_by_mod[mod] = mod_commands
+        end
+    end
     if #scopes == 1 then
         chatcommand_info[name] = modlib.table.tablecopy(definition)
+        insert_info_by_mod(name)
         trie.insert(chatcommands, name, definition, override)
     else
-        local supercommand, super_info = trie.get(chatcommands, scopes[1]),
-                                         chatcommand_info[scopes[1]]
+        local supercommand = trie.get(chatcommands, scopes[1])
+        local super_info = chatcommand_info[scopes[1]]
+        insert_info_by_mod(scopes[1])
         if not supercommand then
             supercommand = {
                 subcommands = trie.new(),
@@ -183,6 +196,11 @@ function register_chatcommand(name, def, override)
         super_info.subcommands[scopes[#scopes]] = modlib.table.copy(definition)
         trie.insert(supercommand.subcommands, scopes[#scopes], definition,
                     override)
+    end
+    if chatcommand_help_built then
+        -- TODO insert into help instead of rebuilding & use modlib's logging
+        minetest.log("warning", "Chatcommand registered after mods are loaded, rebuilding chatcommand info")
+        build_chatcommand_info()
     end
 end
 
@@ -296,6 +314,7 @@ function build_info(chatcommands)
                 table.insert(newforbiddenprivs, priv)
             end
         end
+        newdef.is_mod = def.is_mod
         newdef.implicit_call = def.implicit_call
         newdef.description = def.description or ""
         newdef.descriptions = wrap_text(def.description or "", 60)
@@ -312,7 +331,24 @@ function build_info(chatcommands)
     return new_info
 end
 
+function build_chatcommand_info()
+    local chatcommand_info_by_mods = modlib.table.copy(chatcommand_info)
+    for mod, commands in pairs(chatcommand_info_by_mod) do
+        local count = modlib.table.count(commands)
+        if count >= 3 then
+            local mod_info = {is_mod = true, subcommands = {}}
+            chatcommand_info_by_mods["Mod: "..mod] = mod_info
+            for command, info in pairs(commands) do
+                mod_info.subcommands[command] = info
+                chatcommand_info_by_mods[command] = nil
+            end
+        end
+    end
+    chatcommand_help = build_info(chatcommand_info_by_mods)
+end
+
 minetest.register_on_mods_loaded(function()
     modlib.mod.extend("cmdlib", "help")
-    chatcommand_info = build_info(chatcommand_info)
+    build_chatcommand_info()
+    chatcommand_help_built = true
 end)

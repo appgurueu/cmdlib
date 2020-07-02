@@ -5,15 +5,17 @@ function test_format()
     end)
 end
 
-function test_chatcommands()
-    --[[cmdlib.register_chatcommand("cmdlib_test", {
-        params = "<param1>",
-        privs = {fast = true},
-        description = "Test command for cmdlib.",
-        func = function(sendername, params)
-            return true, "You shouted "..(params.param1)
-        end
-    })]]
+function test_chatcommands(explicit_supercommand)
+    if explicit_supercommand then
+        cmdlib.register_chatcommand("cmdlib_test", {
+            params = "<param1>",
+            privs = {fast = true},
+            description = "Test command for cmdlib.",
+            func = function(sendername, params)
+                return true, "You shouted "..(params.param1)
+            end
+        })
+    end
     cmdlib.register_chatcommand("this", {
         params = "<param1>",
         func = function() end
@@ -58,12 +60,13 @@ function test_trie()
 end
 
 function test_info()
-    minetest.after(1, function()
-        print(dump(chatcommand_info))
+    minetest.register_on_mods_loaded(function()
+        print(dump(cmdlib.chatcommand_info))
+        print(dump(cmdlib.chatcommand_info_by_mod))
     end)
 end
 
-test_chatcommands()
+-- test_chatcommands()
 -- test_format()
 -- test_trie()
 -- test_info()

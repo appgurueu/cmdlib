@@ -9,7 +9,8 @@ function minetest_register_chatcommand_generator(override)
             privs = def.privs,
             params = def.params,
             custom_syntax = true,
-            func = def.func
+            func = def.func,
+            mod = def.mod_origin
         }, override)
     end
 end
