@@ -92,7 +92,7 @@ function build_param_parser(syntax)
             return "Too few parameters given! At least " .. minimum .. " " ..
                        ((minimum == 1 and "is") or "are") ..
                        " required. The following parameters are missing: " ..
-                       table.concat({unpack(required_params, #params + 1)})
+                       table.concat({unpack(required_params, #params + 1)}, ", ")
         end
         local paramtable = {}
         for index, name in ipairs(paramlist) do
