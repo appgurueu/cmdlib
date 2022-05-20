@@ -40,7 +40,9 @@ function show_help_formspec(sendername, query)
             local missing, to_lose = validate_privs_ipairs(info.privs or {}, info.forbidden_privs or {}, minetest.get_player_privs(sendername))
             local privs = next(missing) or next(to_lose)
             local red_or_green = (privs and "#FF0000") or "#00FF00"
-            row(red_or_green, number, red_or_green, name, "#FFFF00", info.descriptions[1] .. ((#info.descriptions > 1 and "...") or ""))
+            if info.descriptions[1] then
+                row(red_or_green, number, red_or_green, name, "#FFFF00", info.descriptions[1] .. ((#info.descriptions > 1 and "...") or ""))
+            end
             for i = 2, #info.descriptions do
                 row("#FFFF00", number + 1, "#FFFF00", info.descriptions[i])
             end
