@@ -328,7 +328,7 @@ function build_info(chatcommands)
         newdef.is_mod = def.is_mod
         newdef.implicit_call = def.implicit_call
         newdef.description = def.description or ""
-        newdef.descriptions = wrap_text(def.description or "", 60)
+        newdef.descriptions = wrap_text(def.description or "", 100)
         if #newdef.descriptions > 1 then
             table.insert(newdef.descriptions, "") -- add blank line
         end

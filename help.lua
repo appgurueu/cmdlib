@@ -91,19 +91,19 @@ function show_help_formspec(sendername, query)
     traverse_commands(chatcommand_info, 1, "")
     tablecontent = table.concat(tablecontent, ",")
     minetest.show_formspec(sendername, "cmdlib:help",
-[[size[12,8]
+[[size[18,12]
 real_coordinates[true]
 image_button[0.25,0.25;0.75,0.75;cmdlib_trash.png;clear;]
 tooltip[clear;Clear]
-field[1,0.25;7.5,0.75;query;;]] .. minetest.formspec_escape(query) .. [[]
+field[1,0.25;15.5,0.75;query;;]] .. minetest.formspec_escape(query) .. [[]
 tooltip[query;Search]
 field_close_on_enter[query;false]
-image_button[7.75,0.25;0.75,0.75;cmdlib_magnifying_glass.png;search;]
+image_button[16.25,0.25;0.75,0.75;cmdlib_magnifying_glass.png;search;]
 tooltip[search;Search]
-image_button_exit[11,0.25;0.75,0.75;cmdlib_cross.png;close;]
+image_button_exit[17,0.25;0.75,0.75;cmdlib_cross.png;close;]
 tooltip[close;Close]
 tablecolumns[color,align=inline;tree,align=inline;color,align=inline;text,align=inline;color,align=inline;text,align=inline,padding=2]
-table[0.25,1;11.5,6.75;commands;]] .. tablecontent .. [[;]
+table[0.25,1;17.5,10.75;commands;]] .. tablecontent .. [[;]
 ]])
 end
 
