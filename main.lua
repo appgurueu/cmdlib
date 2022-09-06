@@ -149,7 +149,7 @@ function register_chatcommand(name, def, override)
         end
     end
     if #scopes == 1 then
-        chatcommand_info[name] = modlib.table.tablecopy(definition)
+        chatcommand_info[name] = modlib.table.copy(definition)
         insert_info_by_mod(name)
         trie.insert(chatcommands, name, definition, override)
     else

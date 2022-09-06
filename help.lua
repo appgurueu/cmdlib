@@ -5,7 +5,7 @@ function show_help_formspec(sendername, query)
         local function search(chatcommands)
             local new_info = {}
             for _, def in ipairs(chatcommands) do
-                local def = modlib.table.tablecopy(def)
+                local def = modlib.table.copy(def)
                 if def.name:lower():find(query, 1, true) or def.description:lower():find(query, 1, true) then
                     table.insert(new_info, def)
                 elseif def.subcommands then
