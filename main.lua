@@ -1,4 +1,4 @@
-modlib.mod.extend("cmdlib", "trie")
+modlib.mod.extend("trie")
 error_format = minetest.get_color_escape_sequence("#FF0000") .. "%s"
 success_format = minetest.get_color_escape_sequence("#00FF00") .. "%s"
 function scope_func(scope)
