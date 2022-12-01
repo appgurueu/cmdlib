@@ -45,7 +45,9 @@ function show_help_formspec(sendername, query)
                 row("#FFFF00", number + 1, "#FFFF00", info.descriptions[i])
             end
             if not info.is_mod then
-                row("#FFFF00", number + 1, "#FFFF00", "/" .. sub_scope .. (info.params or ""))
+                for line in modlib.text.lines((info.params or "") .. "\n") do
+                    row("#FFFF00", number + 1, "#FFFF00", "/" .. sub_scope .. line)
+                end
             end
             --
             if info.privs or info.forbidden_privs then
